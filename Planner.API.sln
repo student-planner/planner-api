@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.API", "Planner.API\Planner.API.csproj", "{BA735A83-FDDE-4B76-995A-599F673CCE66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.Models", "Planner.Models\Planner.Models.csproj", "{4D06FC93-1173-4328-BEFD-15161A9F505C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.Contracts", "Planner.Contracts\Planner.Contracts.csproj", "{3010687B-D46F-4275-A6DC-811BF40D721C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA735A83-FDDE-4B76-995A-599F673CCE66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA735A83-FDDE-4B76-995A-599F673CCE66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA735A83-FDDE-4B76-995A-599F673CCE66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA735A83-FDDE-4B76-995A-599F673CCE66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D06FC93-1173-4328-BEFD-15161A9F505C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D06FC93-1173-4328-BEFD-15161A9F505C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D06FC93-1173-4328-BEFD-15161A9F505C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D06FC93-1173-4328-BEFD-15161A9F505C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3010687B-D46F-4275-A6DC-811BF40D721C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3010687B-D46F-4275-A6DC-811BF40D721C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3010687B-D46F-4275-A6DC-811BF40D721C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3010687B-D46F-4275-A6DC-811BF40D721C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
