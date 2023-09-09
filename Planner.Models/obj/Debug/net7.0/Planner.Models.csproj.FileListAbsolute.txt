@@ -1,0 +1,11 @@
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\bin\Debug\net7.0\Planner.Models.deps.json
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\bin\Debug\net7.0\Planner.Models.dll
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\bin\Debug\net7.0\Planner.Models.pdb
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.AssemblyInfoInputs.cache
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.AssemblyInfo.cs
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.csproj.CoreCompileInputs.cache
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.dll
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\refint\Planner.Models.dll
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\Planner.Models.pdb
+C:\Users\pmark\OneDrive\Документы\GitHub\planner-api\Planner.Models\obj\Debug\net7.0\ref\Planner.Models.dll

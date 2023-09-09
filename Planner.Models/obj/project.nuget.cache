@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VJgI41M2FnDIwVz6LtWxJW7h+6pYuxwl8hIA7h408QHsMMp8nnrimNKuPxHUKN23RQ6TTj5QkjEf9FHeWHnsdA==",
+  "dgSpecHash": "mbI4tMTYA5sC7falgmNieRXJXPJR5/x9we5cxS2OWAXHzTD7hx+ZFOmGmzJbRnBQR2kxbWFBT5y7mHEsh5c0pg==",
   "success": true,
-  "projectFilePath": "/Users/seljmov/ArtWorks/Planner.API/Planner.Models/Planner.Models.csproj",
+  "projectFilePath": "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Models\\Planner.Models.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/Users/seljmov/ArtWorks/Planner.API/Planner.Contracts/Planner.Contracts.csproj": {}
+    "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Contracts\\Planner.Contracts.csproj": {}
   },
   "projects": {
-    "/Users/seljmov/ArtWorks/Planner.API/Planner.Contracts/Planner.Contracts.csproj": {
+    "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Contracts\\Planner.Contracts.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/seljmov/ArtWorks/Planner.API/Planner.Contracts/Planner.Contracts.csproj",
+        "projectUniqueName": "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Contracts\\Planner.Contracts.csproj",
         "projectName": "Planner.Contracts",
-        "projectPath": "/Users/seljmov/ArtWorks/Planner.API/Planner.Contracts/Planner.Contracts.csproj",
-        "packagesPath": "/Users/seljmov/.nuget/packages/",
-        "outputPath": "/Users/seljmov/ArtWorks/Planner.API/Planner.Contracts/obj/",
+        "projectPath": "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Contracts\\Planner.Contracts.csproj",
+        "packagesPath": "C:\\Users\\pmark\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pmark\\OneDrive\\Документы\\GitHub\\planner-api\\Planner.Contracts\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/seljmov/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\pmark\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.302/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
