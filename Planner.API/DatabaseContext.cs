@@ -28,6 +28,8 @@ public class DatabaseContext : DbContext
             e.Property(e => e.RefreshTokenExpires);
             e.Property(e => e.Created).IsRequired();
 
+            e.HasMany(u => u.Goals).WithOne(g => g.User).HasForeignKey(g => g.UserId);
+
             e.HasData(new User
             {
                 Id = Guid.NewGuid(),
@@ -46,6 +48,8 @@ public class DatabaseContext : DbContext
             e.Property(e => e.Priority);
             e.Ignore(e => e.SubGoalsIds);
             e.Ignore(e => e.DependGoalsIds);
+
+            e.HasOne(g => g.User).WithMany(u => u.Goals).HasForeignKey(g => g.UserId);
         });
 
         modelBuilder.Entity<AuthTicket>(e =>

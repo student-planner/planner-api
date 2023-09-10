@@ -31,6 +31,11 @@ public class User
     public DateTime Created { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Коллекция задач
+    /// </summary>
+    public ICollection<Goal> Goals { get; set; } = new List<Goal>();
+
+    /// <summary>
     /// Обновить токен обновления
     /// </summary>
     /// <param name="refreshToken">Токен обновления</param>
