@@ -53,5 +53,5 @@ public class Goal
     /// <summary>
     /// Пользователь
     /// </summary>
-    public User User { get; set; } = null!;
+    public virtual User User { get; set; } = null!;
 }
