@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Planner.API.Helpers;
 using Planner.Contracts.Goal;
@@ -12,6 +13,7 @@ namespace Planner.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class GoalController : Controller
 {
     private readonly DatabaseContext _context;
@@ -58,12 +60,12 @@ public class GoalController : Controller
     /// <response code="401">Токен доступа истек / неавторизован</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
-    [Route("{id:guid}"), HttpGet]
+    [Route("GetGoalById/{id:guid}"), HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GoalDto))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetGoalById(Guid id)
+    public async Task<IActionResult> GetGoalById([FromRoute] Guid id)
     {
         var userInfo = GetAuthUserInfo();
         if (userInfo is null)
@@ -85,6 +87,7 @@ public class GoalController : Controller
 
         return Ok(goalDto);
     }
+
     /// <summary>
     /// Добавить задачу
     /// </summary>
@@ -94,7 +97,7 @@ public class GoalController : Controller
     /// <response code="400">Неверный входные данные</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("AddGoal"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Goal))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GoalDto))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -119,6 +122,66 @@ public class GoalController : Controller
         return CreatedAtAction(nameof(Get), new { id = goal.Id }, goal);
     }
 
+    /// <summary>
+    /// Удалить задачу
+    /// </summary>
+    /// <param name="id"></param>
+    /// <response code="204">Задача удалена</response>
+    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <response code="404">Задача не найдена</response>
+    /// <response code="500">Ошибка сервера</response>
+    [Route("DeleteGoal/{id:guid}"), HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        var userInfo = GetAuthUserInfo();
+        if (userInfo is null)
+            return Unauthorized();
+
+        var goal = await _context.Goals.FirstOrDefaultAsync(x => x.Id == id);
+        if (goal is null)
+            return NotFound();
+
+        _context.Goals.Remove(goal);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Обновить задачу
+    /// </summary>
+    /// <param name="id"></param>
+    /// <response code="204">Задача обновлена</response>
+    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <response code="404">Задача не найдена</response>
+    /// <response code="500">Ошибка сервера</response>
+    [Route("UpdateGoal/{id:guid}"), HttpPatch]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] GoalUpdateDto goalUpdateDto)
+    {
+        var userInfo = GetAuthUserInfo();
+        if (userInfo is null)
+            return Unauthorized();
+
+        var goal = await _context.Goals.FirstOrDefaultAsync(x => x.Id == id);
+        if (goal is null)
+            return NotFound();
+
+        goal.Name = goalUpdateDto.Name;
+        goal.Description = goalUpdateDto.Description;
+
+        _context.Goals.Update(goal);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
     #region Claims
 
     private AuthUserInfo? GetAuthUserInfo()
