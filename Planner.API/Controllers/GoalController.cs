@@ -56,8 +56,9 @@ public class GoalController : Controller
     /// <summary>
     /// Получить задачу
     /// </summary>
+    /// <param name="id">Идентификатор задачи</param>
     /// <response code="200">Задач</response>
-    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <response code="401">Токен доступа истек</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("GetGoalById/{id:guid}"), HttpGet]
@@ -91,15 +92,15 @@ public class GoalController : Controller
     /// <summary>
     /// Добавить задачу
     /// </summary>
-    /// <param name="goalAddDto"></param>
-    /// <response code="200">Задача добавлена</response>
-    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <param name="goalAddDto">Модель данных для добавления задачи</param>
+    /// <response code="201">Задача добавлена</response>
     /// <response code="400">Неверный входные данные</response>
+    /// <response code="401">Токен доступа истек</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("AddGoal"), HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GoalDto))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddGoal([FromBody] GoalAddDto goalAddDto)
     {
@@ -125,9 +126,9 @@ public class GoalController : Controller
     /// <summary>
     /// Удалить задачу
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Идентификатор задачи</param>
     /// <response code="204">Задача удалена</response>
-    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <response code="401">Токен доступа истек</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("DeleteGoal/{id:guid}"), HttpDelete]
@@ -152,11 +153,12 @@ public class GoalController : Controller
     }
 
     /// <summary>
-    /// Обновить задачу
+    /// Обновление данных задачи
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">Идентификатор задачи</param>
+    /// <param name="goalUpdateDto">Модель данных для обновления задачи</param>
     /// <response code="204">Задача обновлена</response>
-    /// <response code="401">Токен доступа истек / неавторизован</response>
+    /// <response code="401">Токен доступа истек</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("UpdateGoal/{id:guid}"), HttpPatch]
