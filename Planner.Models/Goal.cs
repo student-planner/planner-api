@@ -44,4 +44,14 @@ public class Goal
     /// Коллекция идентификаторов зависимых задач
     /// </summary>
     public ICollection<Guid> DependGoalsIds { get; set; } = new List<Guid>();
+    
+    /// <summary>
+    /// Идентификатор пользователя, кому принадлежит задача
+    /// </summary>
+    public Guid UserId { get; set; }
+
+    /// <summary>
+    /// Пользователь
+    /// </summary>
+    public virtual User User { get; set; } = null!;
 }

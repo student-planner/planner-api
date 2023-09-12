@@ -13,14 +13,53 @@ public class JwtCreator
 {
     private const int RefreshTokenLength = 64;
     private readonly IOptions<JwtOptions> _jwtOptions;
+    private readonly ILogger<JwtCreator> _logger;
 
     /// <summary>
     /// Конструктор класса <see cref="JwtCreator"/>
     /// </summary>
     /// <param name="jwtOptions">Настройки jwt</param>
-    public JwtCreator(IOptions<JwtOptions> jwtOptions)
+    public JwtCreator(IOptions<JwtOptions> jwtOptions, ILogger<JwtCreator> logger)
     {
         _jwtOptions = jwtOptions;
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Прочитать Jwt
+    /// </summary>
+    /// <param name="token">Jwt</param>
+    /// <param name="claims">Данные пользователя</param>
+    /// <param name="validTo">Дата валидности</param>
+    /// <returns></returns>
+    public bool ReadAccessToken(string token, out ClaimsPrincipal? claims, out DateTime validTo)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var validations = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = _jwtOptions.Value.GetSymmetricSecurityKey(),
+            ValidateIssuer = true,
+            ValidIssuer = _jwtOptions.Value.Issuer,
+            ValidateAudience = true,
+            ValidAudience = _jwtOptions.Value.Audience,
+            ValidateLifetime = true
+        };
+
+        try
+        {
+            claims = tokenHandler.ValidateToken(token, validations, out var validatedToken);
+            validTo = validatedToken.ValidTo;
+            return true;
+        }
+        catch (SecurityTokenException ex)
+        {
+            _logger.LogWarning(message: ex.ToString());
+        }
+
+        claims = null;
+        validTo = DateTime.MinValue;
+        return false;
     }
 
     /// <summary>

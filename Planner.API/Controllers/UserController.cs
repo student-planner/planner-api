@@ -128,10 +128,10 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="userRegisterDto"></param>
     /// <returns></returns>
-    public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
+/*    public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
     {
         return Ok();
-    }
+    }*/
     // Регистарция (шлет код, тикет, почту)
     // Пишет почту -> отправляет код ->
     // код подтверждает -> все ок - регаем, иначе - нет -> возвращаем токен
