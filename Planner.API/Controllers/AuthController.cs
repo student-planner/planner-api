@@ -163,35 +163,4 @@ public class AuthController : ControllerBase
         };
         return Ok(tokens);
     }
-
-    /// <summary>
-    /// Получить бесконечный токен для теста
-    /// </summary>
-    /// <response code="200">Токены успешно получены</response>
-    /// <response code="404">Пользователь c таким логином не найден</response>
-    /// <response code="500">Ошибка сервера</response>
-    [HttpPost("fiction")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TicketDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> FictionToken()
-    {
-        const string email = "guest@example.com";
-        var user = await _context.Users.FirstOrDefaultAsync(c => c.Email == email);
-        if (user is null)
-            return NotFound($"Пользователь с логином {email} не найден");
-
-        const int time = 259200; // Полгода
-        user.RefreshToken = JwtCreator.CreateRefreshToken();
-        user.RefreshTokenExpires = DateTime.UtcNow.AddMinutes(time);
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-
-        var tokens = new TokensDto
-        {
-            AccessToken = _jwtCreator.CreateAccessToken(user, time),
-            RefreshToken = user.RefreshToken,
-        };
-        return Ok(tokens);
-    }
 }

@@ -122,17 +122,4 @@ public class UsersController : ControllerBase
         await _context.SaveChangesAsync();
         return Get(user.Id);
     }
-
-    /// <summary>
-    /// Регистрация пользователя
-    /// </summary>
-    /// <param name="userRegisterDto"></param>
-    /// <returns></returns>
-/*    public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
-    {
-        return Ok();
-    }*/
-    // Регистарция (шлет код, тикет, почту)
-    // Пишет почту -> отправляет код ->
-    // код подтверждает -> все ок - регаем, иначе - нет -> возвращаем токен
 }

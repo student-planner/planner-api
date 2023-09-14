@@ -1,7 +1,7 @@
 ﻿namespace Planner.API.Options;
 
 /// <summary>
-/// Настройки сообщений для авторизации
+/// Настройки сообщений
 /// </summary>
 /// <param name="From">От кого</param>
 /// <param name="Subject">Тема письма</param>
