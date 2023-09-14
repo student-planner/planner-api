@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Planner.API;
 using Planner.API.Helpers;
-using Planner.API.Options;
 using Planner.API.Services;
 using Seljmov.AspNet.Commons.Helpers;
 
