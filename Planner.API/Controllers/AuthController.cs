@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Planner.API.Helpers;
+using Planner.API.Options;
 using Planner.Models;
 using Planner.API.Services;
 using Planner.Contracts.Auth;
@@ -64,7 +65,7 @@ public class AuthController : ControllerBase
         try
         {
             var ticket = AuthTicket.Create(startDto.Email);
-            await emailCodeSender.Send(ticket);
+            await emailCodeSender.SendAuthTicket(ticket);
             await _context.AuthTickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
             return Ok(new TicketDto

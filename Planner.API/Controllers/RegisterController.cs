@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Planner.API.Helpers;
+using Planner.API.Options;
 using Planner.API.Services;
 using Planner.Contracts.Auth;
 using Planner.Contracts.Register;
@@ -22,6 +23,8 @@ public class RegisterController : Controller
     /// </summary>
     /// <param name="context">Контекст базы данных</param>
     /// <param name="logger">Логгер</param>
+    /// <param name="jwtOptions"></param>
+    /// <param name="jwtCreator"></param>
     public RegisterController(DatabaseContext context, ILogger<RegisterController> logger, IOptions<JwtOptions> jwtOptions, JwtCreator jwtCreator)
     {
         _context = context;
@@ -58,7 +61,7 @@ public class RegisterController : Controller
         try
         {
             var ticket = AuthTicket.Create(registerStartDto.Email);
-            await emailCodeSender.Send(ticket);
+            await emailCodeSender.SendRegisterTicket(ticket);
             await _context.AuthTickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
             return Ok(new TicketDto

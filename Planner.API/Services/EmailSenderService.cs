@@ -5,33 +5,66 @@ using MailKit.Net.Smtp;
 
 namespace Planner.API.Services;
 
+/// <summary>
+/// Сервис отправки кода подтверждения на почту
+/// </summary>
 public class EmailSenderService
 {
+    private readonly IConfiguration _configuration;
     private readonly SmtpClientOptions _smtpClientOptions;
-    private readonly CodeTemplateOptions _codeTemplateOptions;
 
     /// <summary>
     /// Конструктор сервиса отправки кода подтверждения на почту
     /// </summary>
-    /// <param name="smtpClientOptions">Параметры Smtp-клиента</param>
-    /// <param name="templateOptions">Параметры сообщения</param>
-    public EmailSenderService(SmtpClientOptions smtpClientOptions, CodeTemplateOptions templateOptions)
+    /// <param name="configuration">Конфигуратор</param>
+    public EmailSenderService(IConfiguration configuration)
     {
-        _smtpClientOptions = smtpClientOptions;
-        _codeTemplateOptions = templateOptions;
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _smtpClientOptions = _configuration.GetSection(nameof(SmtpClientOptions)).Get<SmtpClientOptions>() ?? throw new ArgumentNullException(nameof(_smtpClientOptions));
     }
 
-    /// <inheritdoc cref="IEmailCodeSender.Send(AuthTicket)" />
-    public async Task<bool> Send(AuthTicket ticket)
+    /// <summary>
+    /// Отправляет код подтверждения авторизации
+    /// </summary>
+    /// <param name="ticket">Тикет</param>
+    /// <returns>Успешность отправки</returns>
+    /// <exception cref="ArgumentNullException">Не удалось получить настройки шаблона сообщения</exception>
+    public async Task<bool> SendAuthTicket(AuthTicket ticket)
+    {
+        var codeTemplateOptions = _configuration.GetSection(nameof(CodeTemplateOptions));
+        var authCodeTemplateOptions = codeTemplateOptions.GetSection("Auth").Get<CodeTemplateOptions>();
+        if (authCodeTemplateOptions == null)
+            throw new ArgumentNullException(nameof(authCodeTemplateOptions));
+        
+        return await _send(ticket, authCodeTemplateOptions);
+    }
+    
+    /// <summary>
+    /// Отправляет код подтверждения регистрации
+    /// </summary>
+    /// <param name="ticket">Тикет</param>
+    /// <returns>Успешность отправки</returns>
+    /// <exception cref="ArgumentNullException">Не удалось получить настройки шаблона сообщения</exception>
+    public async Task<bool> SendRegisterTicket(AuthTicket ticket)
+    {
+        var codeTemplateOptions = _configuration.GetSection(nameof(CodeTemplateOptions));
+        var registerCodeTemplateOptions = codeTemplateOptions.GetSection("Register").Get<CodeTemplateOptions>();
+        if (registerCodeTemplateOptions == null)
+            throw new ArgumentNullException(nameof(registerCodeTemplateOptions));
+        
+        return await _send(ticket, registerCodeTemplateOptions);
+    }
+    
+    private async Task<bool> _send(AuthTicket ticket, CodeTemplateOptions templateOptions)
     {
         var emailMessage = new MimeMessage();
 
-        emailMessage.From.Add(new MailboxAddress(_codeTemplateOptions.From, _smtpClientOptions.Email));
+        emailMessage.From.Add(new MailboxAddress(templateOptions.From, _smtpClientOptions.Email));
         emailMessage.To.Add(new MailboxAddress("", ticket.Login));
-        emailMessage.Subject = string.Format(_codeTemplateOptions.Subject, ticket.Code);
+        emailMessage.Subject = string.Format(templateOptions.Subject, ticket.Code);
         emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
         {
-            Text = string.Format(_codeTemplateOptions.Body, ticket.Code)
+            Text = string.Format(templateOptions.Body, ticket.Code)
         };
 
         using var client = new SmtpClient();

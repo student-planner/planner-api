@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Planner.API;
 
-public class DatabaseContext : DbContext
+public sealed class DatabaseContext : DbContext
 {
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Goal> Goals { get; set; } = null!;
