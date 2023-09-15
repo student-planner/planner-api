@@ -47,13 +47,11 @@ public class RegisterController : Controller
     /// <response code="400">Передан некорректный логин</response>
     /// <response code="404">Пользователь c таким логином уже существует</response>
     /// <response code="500">Ошибка сервера</response>
-    /// <response code="501">Метод отправки смс-кода не реализован</response>
-    [HttpPost("register/start")]
+    [HttpPost("start")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TicketDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthStartDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(User))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status501NotImplemented)]
     public async Task<IActionResult> RegisterStart([FromBody] RegisterStartDto registerStartDto, [FromServices] EmailSenderService emailCodeSender)
     {
         if (string.IsNullOrEmpty(registerStartDto.Email))
@@ -90,7 +88,7 @@ public class RegisterController : Controller
     /// <response code="404">Не найден тикет или клиент</response>
     /// <response code="409">Передан некорректный секретный код</response>
     /// <response code="500">Ошибка сервера</response>
-    [HttpPost("register/complete")]
+    [HttpPost("complete")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokensDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthCompleteDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
