@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Planner.API.Helpers;
-using Planner.API.Options;
 using Planner.Models;
 using Planner.API.Services;
 using Planner.Contracts.Auth;

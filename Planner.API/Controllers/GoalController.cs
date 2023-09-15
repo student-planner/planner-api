@@ -19,6 +19,11 @@ public class GoalController : Controller
     private readonly DatabaseContext _context;
     private readonly JwtHelper _jwtHelper;
 
+    /// <summary>
+    /// Конструктор класса <see cref="GoalController"/>
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="jwtHelper"></param>
     public GoalController(DatabaseContext context, JwtHelper jwtHelper)
     {
         _context = context;

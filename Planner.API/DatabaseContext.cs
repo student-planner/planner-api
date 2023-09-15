@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Planner.Models;
-using System.Data;
 
 namespace Planner.API;
 

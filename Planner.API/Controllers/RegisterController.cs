@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Planner.API.Helpers;
-using Planner.API.Options;
 using Planner.API.Services;
 using Planner.Contracts.Auth;
 using Planner.Contracts.Register;
@@ -82,7 +81,7 @@ public class RegisterController : Controller
     /// <summary>
     /// Завершает процесс регистрации. Проверяет тикет и секретный код. Возвращает токен доступа и обновления.
     /// </summary>
-    /// <param name="completeDto">Данные для завершения регистрации</param>
+    /// <param name="registerCompleteDto">Данные для завершения регистрации</param>
     /// <response code="200">Регистрация успешно завершена</response>
     /// <response code="400">Передан некорректный тикет</response>
     /// <response code="404">Не найден тикет или клиент</response>

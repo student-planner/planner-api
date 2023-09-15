@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using Microsoft.Extensions.Options;
 using Planner.Models;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -6,6 +7,7 @@ using Seljmov.AspNet.Commons.Options;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Logging;
 
 namespace Planner.API.Helpers;
 
@@ -22,6 +24,7 @@ public class JwtHelper
     /// Конструктор класса <see cref="JwtHelper"/>
     /// </summary>
     /// <param name="jwtOptions">Настройки jwt</param>
+    /// <param name="logger">Логгер</param>
     public JwtHelper(IOptions<JwtOptions> jwtOptions, ILogger<JwtHelper> logger)
     {
         _jwtOptions = jwtOptions;
