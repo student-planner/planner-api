@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
 {
     private readonly DatabaseContext _context;
     private readonly IOptions<JwtOptions> _jwtOptions;
-    private readonly JwtCreator _jwtCreator;
+    private readonly JwtHelper _jwtHelper;
     private readonly ILogger<AuthController> _logger;
 
     /// <summary>
@@ -27,13 +27,13 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="context">Контекст базы данных</param>
     /// <param name="jwtOptions">Настройки Jwt-токена</param>
-    /// <param name="jwtCreator">Класс-создатель Jwt-токена</param>
+    /// <param name="jwtHelper">Класс-создатель Jwt-токена</param>
     /// <param name="logger">Логгер</param>
-    public AuthController(DatabaseContext context, IOptions<JwtOptions> jwtOptions, JwtCreator jwtCreator, ILogger<AuthController> logger)
+    public AuthController(DatabaseContext context, IOptions<JwtOptions> jwtOptions, JwtHelper jwtHelper, ILogger<AuthController> logger)
     {
         _context = context;
         _jwtOptions = jwtOptions;
-        _jwtCreator = jwtCreator;
+        _jwtHelper = jwtHelper;
         _logger = logger;
     }
 
@@ -46,13 +46,11 @@ public class AuthController : ControllerBase
     /// <response code="400">Передан некорректный логин</response>
     /// <response code="404">Пользователь c таким логином не найден</response>
     /// <response code="500">Ошибка сервера</response>
-    /// <response code="501">Метод отправки смс-кода не реализован</response>
     [HttpPost("start")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TicketDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthStartDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(User))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status501NotImplemented)]
     public async Task<IActionResult> AuthStart([FromBody] AuthStartDto startDto, [FromServices] EmailSenderService emailCodeSender)
     {
         if (string.IsNullOrEmpty(startDto.Email))
@@ -113,7 +111,7 @@ public class AuthController : ControllerBase
         if (user is null)
             return NotFound($"Пользователь с логином {ticket.Login} не найден");
 
-        user.RefreshToken = JwtCreator.CreateRefreshToken();
+        user.RefreshToken = JwtHelper.CreateRefreshToken();
         user.RefreshTokenExpires = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.RefreshTokenLifetime);
         _context.Users.Update(user);
         _context.AuthTickets.Remove(ticket);
@@ -121,7 +119,7 @@ public class AuthController : ControllerBase
 
         var tokens = new TokensDto
         {
-            AccessToken = _jwtCreator.CreateAccessToken(user, _jwtOptions.Value.AccessTokenLifetime),
+            AccessToken = _jwtHelper.CreateAccessToken(user, _jwtOptions.Value.AccessTokenLifetime),
             RefreshToken = user.RefreshToken,
         };
         return Ok(tokens);
@@ -152,14 +150,14 @@ public class AuthController : ControllerBase
         if (user.RefreshTokenExpires < DateTime.UtcNow)
             return Unauthorized($"Токен обновления устарел");
 
-        user.RefreshToken = JwtCreator.CreateRefreshToken();
+        user.RefreshToken = JwtHelper.CreateRefreshToken();
         user.RefreshTokenExpires = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.RefreshTokenLifetime);
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
 
         var tokens = new TokensDto
         {
-            AccessToken = _jwtCreator.CreateAccessToken(user, _jwtOptions.Value.AccessTokenLifetime),
+            AccessToken = _jwtHelper.CreateAccessToken(user, _jwtOptions.Value.AccessTokenLifetime),
             RefreshToken = user.RefreshToken,
         };
         return Ok(tokens);

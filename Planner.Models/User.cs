@@ -33,7 +33,7 @@ public class User
     /// <summary>
     /// Коллекция задач
     /// </summary>
-    public ICollection<Goal> Goals { get; set; } = new List<Goal>();
+    public virtual ICollection<Goal> Goals { get; set; } = new List<Goal>();
 
     /// <summary>
     /// Обновить токен обновления

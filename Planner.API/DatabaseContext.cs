@@ -4,20 +4,45 @@ using System.Data;
 
 namespace Planner.API;
 
+/// <summary>
+/// Контекст базы данных
+/// </summary>
 public sealed class DatabaseContext : DbContext
 {
+    /// <summary>
+    /// Таблица пользователей
+    /// </summary>
     public DbSet<User> Users { get; set; } = null!;
+    
+    /// <summary>
+    /// Таблица задач
+    /// </summary>
     public DbSet<Goal> Goals { get; set; } = null!;
+    
+    /// <summary>
+    /// Таблица хранения тикетов для авторизации и регистрации
+    /// </summary>
     public DbSet<AuthTicket> AuthTickets { get; set; } = null!;
 
+    /// <summary>
+    /// Конструктор по умолчанию
+    /// </summary>
     public DatabaseContext() { }
 
+    /// <summary>
+    /// Конструктор с авто-миграцией
+    /// </summary>
+    /// <param name="options">Опции базы данных</param>
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
         if (Database.GetPendingMigrations().Any())
             Database.Migrate();
     }
 
+    /// <summary>
+    /// Создание сущностей в базе данных на основе моделей
+    /// </summary>
+    /// <param name="modelBuilder">Конструктор сущностей</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(e =>

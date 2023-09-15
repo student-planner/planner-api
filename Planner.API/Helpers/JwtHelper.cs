@@ -9,17 +9,20 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Planner.API.Helpers;
 
-public class JwtCreator
+/// <summary>
+/// Класс для работы с JWT
+/// </summary>
+public class JwtHelper
 {
     private const int RefreshTokenLength = 64;
     private readonly IOptions<JwtOptions> _jwtOptions;
-    private readonly ILogger<JwtCreator> _logger;
+    private readonly ILogger<JwtHelper> _logger;
 
     /// <summary>
-    /// Конструктор класса <see cref="JwtCreator"/>
+    /// Конструктор класса <see cref="JwtHelper"/>
     /// </summary>
     /// <param name="jwtOptions">Настройки jwt</param>
-    public JwtCreator(IOptions<JwtOptions> jwtOptions, ILogger<JwtCreator> logger)
+    public JwtHelper(IOptions<JwtOptions> jwtOptions, ILogger<JwtHelper> logger)
     {
         _jwtOptions = jwtOptions;
         _logger = logger;

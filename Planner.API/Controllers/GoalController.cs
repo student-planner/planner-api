@@ -17,12 +17,12 @@ namespace Planner.API.Controllers;
 public class GoalController : Controller
 {
     private readonly DatabaseContext _context;
-    private readonly JwtCreator _jwtCreator;
+    private readonly JwtHelper _jwtHelper;
 
-    public GoalController(DatabaseContext context, JwtCreator jwtCreator)
+    public GoalController(DatabaseContext context, JwtHelper jwtHelper)
     {
         _context = context;
-        _jwtCreator = jwtCreator;
+        _jwtHelper = jwtHelper;
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class GoalController : Controller
     /// <response code="401">Токен доступа истек</response>
     /// <response code="500">Ошибка сервера</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type =  typeof(GoalDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(List<GoalDto>))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get()
@@ -97,12 +97,14 @@ public class GoalController : Controller
     /// <response code="204">Задача обновлена</response>
     /// <response code="400">Неверный входные данные</response>
     /// <response code="401">Токен доступа истек</response>
+    /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GoalDto))]
     [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(GoalDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Put([FromBody] GoalPutDto putDto)
     {
@@ -166,7 +168,7 @@ public class GoalController : Controller
         _context.Goals.Remove(goal);
         await _context.SaveChangesAsync();
 
-        return Ok();
+        return NoContent();
     }
     
     #region Claims
@@ -176,7 +178,7 @@ public class GoalController : Controller
         string? authHeader = Request.Headers["Authorization"];
         var token = authHeader?.Replace("Bearer ", "") ?? throw new ArgumentNullException($"Bearer token not found");
 
-        _ = _jwtCreator.ReadAccessToken(token, out var claims, out var validTo);
+        _ = _jwtHelper.ReadAccessToken(token, out var claims, out var validTo);
         if (claims is null) return null;
 
         var userInfo = new AuthUserInfo(

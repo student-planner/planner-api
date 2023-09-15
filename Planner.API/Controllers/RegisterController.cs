@@ -11,12 +11,17 @@ using Seljmov.AspNet.Commons.Options;
 
 namespace Planner.API.Controllers;
 
+/// <summary>
+/// Контроллер для работы с регистрацией
+/// </summary>
+[ApiController]
+[Route("api/[controller]")]
 public class RegisterController : Controller
 {
     private readonly DatabaseContext _context;
     private readonly ILogger<RegisterController> _logger;
     private readonly IOptions<JwtOptions> _jwtOptions;
-    private readonly JwtCreator _jwtCreator;
+    private readonly JwtHelper _jwtHelper;
 
     /// <summary>
     /// Конструктор класса <see cref="RegisterController" />
@@ -24,12 +29,12 @@ public class RegisterController : Controller
     /// <param name="context">Контекст базы данных</param>
     /// <param name="logger">Логгер</param>
     /// <param name="jwtOptions"></param>
-    /// <param name="jwtCreator"></param>
-    public RegisterController(DatabaseContext context, ILogger<RegisterController> logger, IOptions<JwtOptions> jwtOptions, JwtCreator jwtCreator)
+    /// <param name="jwtHelper"></param>
+    public RegisterController(DatabaseContext context, ILogger<RegisterController> logger, IOptions<JwtOptions> jwtOptions, JwtHelper jwtHelper)
     {
         _context = context;
         _logger = logger;
-        _jwtCreator = jwtCreator;
+        _jwtHelper = jwtHelper;
         _jwtOptions = jwtOptions;
     }
 
@@ -109,7 +114,7 @@ public class RegisterController : Controller
         {
             Email = registerCompleteDto.Email,
             Created = DateTime.UtcNow,
-            RefreshToken = JwtCreator.CreateRefreshToken(),
+            RefreshToken = JwtHelper.CreateRefreshToken(),
             RefreshTokenExpires = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.RefreshTokenLifetime)
         };
         await _context.Users.AddAsync(newUser);
@@ -118,7 +123,7 @@ public class RegisterController : Controller
 
         var tokens = new TokensDto
         {
-            AccessToken = _jwtCreator.CreateAccessToken(newUser, _jwtOptions.Value.AccessTokenLifetime),
+            AccessToken = _jwtHelper.CreateAccessToken(newUser, _jwtOptions.Value.AccessTokenLifetime),
             RefreshToken = newUser.RefreshToken,
         };
 
