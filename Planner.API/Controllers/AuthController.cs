@@ -57,7 +57,7 @@ public class AuthController : ControllerBase
 
         try
         {
-            var ticket = AuthTicket.Create(startDto.Email);
+            var ticket = AuthTicket.Create(startDto.Email, startDto.DeviceDescription);
             await emailCodeSender.Send(ticket);
             await _context.AuthTickets.AddAsync(ticket);
             await _context.SaveChangesAsync();

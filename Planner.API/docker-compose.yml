@@ -60,12 +60,9 @@ services:
       - SmtpClientOptions__Email=${SMTP_CLIENT_EMAIL}
       - SmtpClientOptions__Password=${SMTP_CLIENT_PASSWORD}
       - SmtpClientOptions__EnableSsl=${SMTP_CLIENT_ENABLE_SSL}
-      - CodeTemplateOptions__Auth__From=${CODE_TEMPLATE_FROM}
-      - CodeTemplateOptions__Auth__Subject=${CODE_TEMPLATE_SUBJECT}
-      - CodeTemplateOptions__Auth__Body=${CODE_TEMPLATE_BODY_AUTH}
-      - CodeTemplateOptions__Register__From=${CODE_TEMPLATE_FROM}
-      - CodeTemplateOptions__Register__Subject=${CODE_TEMPLATE_SUBJECT}
-      - CodeTemplateOptions__Register__Body=${CODE_TEMPLATE_BODY_REGISTER}
+      - CodeTemplateOptions__From=${CODE_TEMPLATE_FROM}
+      - CodeTemplateOptions__Subject=${CODE_TEMPLATE_SUBJECT}
+      - CodeTemplateOptions__Body=${CODE_TEMPLATE_BODY}
     depends_on:
       - postgres
     restart: always
