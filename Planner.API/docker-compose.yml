@@ -1,0 +1,78 @@
+version: '3.4'
+
+networks:
+  planner-net:
+    external: true
+
+services:
+  postgres: 
+    image: postgres:12
+    container_name: postgres
+    hostname: postgres
+    networks: 
+      - planner-net
+    environment: 
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - pg-conf:/etc/postgresql
+      - pg-log:/var/log/postgresql
+      - pg-backup:/backup
+    restart: always
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    hostname: pgadmin4
+    networks:
+      - planner-net
+    ports:
+      - 54320:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+    restart: always
+
+  planner-api:
+    image: seljmov/planner-api:amd64
+    container_name: planner-api
+    hostname: planner-api
+    networks: 
+      - planner-net
+    ports:
+      - 7171:5050
+    environment:
+      - ASPNETCORE_ENVIRONMENT
+      - JwtOptions__Issuer=${JWT_ISSUER}
+      - JwtOptions__Audience=${JWT_AUDIENCE}
+      - JwtOptions__Key=${JWT_KEY}
+      - JwtOptions__AccessTokenLifetime=${JWT_ACCESS_TOKEN_LIFETIME}
+      - JwtOptions__RefreshTokenLifetime=${JWT_REFRESH_TOKEN_LIFETIME}
+      - SmtpClientOptions__Host=${SMTP_CLIENT_HOST}
+      - SmtpClientOptions__Port=${SMTP_CLIENT_PORT}
+      - SmtpClientOptions__Email=${SMTP_CLIENT_EMAIL}
+      - SmtpClientOptions__Password=${SMTP_CLIENT_PASSWORD}
+      - SmtpClientOptions__EnableSsl=${SMTP_CLIENT_ENABLE_SSL}
+      - CodeTemplateOptions__Auth__From=${CODE_TEMPLATE_FROM}
+      - CodeTemplateOptions__Auth__Subject=${CODE_TEMPLATE_SUBJECT}
+      - CodeTemplateOptions__Auth__Body=${CODE_TEMPLATE_BODY_AUTH}
+      - CodeTemplateOptions__Register__From=${CODE_TEMPLATE_FROM}
+      - CodeTemplateOptions__Register__Subject=${CODE_TEMPLATE_SUBJECT}
+      - CodeTemplateOptions__Register__Body=${CODE_TEMPLATE_BODY_REGISTER}
+    depends_on:
+      - postgres
+    restart: always
+
+volumes:
+  pg-data: {}
+  pg-conf: {}
+  pg-log: {}
+  pg-backup: {}
+  pgadmin: {}
