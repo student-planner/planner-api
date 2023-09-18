@@ -11,12 +11,6 @@ public class AuthCompleteDto
     /// Тикет
     /// </summary>
     [Required(ErrorMessage = "Не указан тикет")]
-    public string Email { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Тикет
-    /// </summary>
-    [Required(ErrorMessage = "Не указан тикет")]
     public string TicketId { get; set; } = string.Empty;
 
     /// <summary>
