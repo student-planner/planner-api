@@ -43,12 +43,10 @@ public class AuthController : ControllerBase
     /// <param name="emailCodeSender">Сервис отправки смс-кода по электронной почте</param>
     /// <response code="200">Авторизация успешно начата</response>
     /// <response code="400">Передан некорректный логин</response>
-    /// <response code="404">Пользователь c таким логином не найден</response>
     /// <response code="500">Ошибка сервера</response>
     [HttpPost("start")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TicketDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(AuthStartDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(User))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AuthStart([FromBody] AuthStartDto startDto, [FromServices] EmailSenderService emailCodeSender)
     {
@@ -56,18 +54,17 @@ public class AuthController : ControllerBase
             return BadRequest($"Поле {nameof(startDto.Email)} не может быть пустым");
 
         var user = await _context.Users.FirstOrDefaultAsync(c => c.Email == startDto.Email);
-        if (user is null)
-            return NotFound($"Пользователь с логином {startDto.Email} не найден");
 
         try
         {
             var ticket = AuthTicket.Create(startDto.Email);
-            await emailCodeSender.SendAuthTicket(ticket);
+            await emailCodeSender.Send(ticket);
             await _context.AuthTickets.AddAsync(ticket);
             await _context.SaveChangesAsync();
             return Ok(new TicketDto
             {
-                TicketId = ticket.Id.ToString()
+                TicketId = ticket.Id.ToString(),
+                IsNewUser = user is null,
             });
         }
         catch (Exception ex)
@@ -97,18 +94,28 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(completeDto.TicketId) ||
             !Guid.TryParse(completeDto.TicketId, out var ticketId) ||
             string.IsNullOrEmpty(completeDto.Code))
+        {
+            _logger.LogError($"Некорректный тикет или код. TicketId: {completeDto.TicketId}, Code: {completeDto.Code}");
             return BadRequest($"Некорректный тикет или код");
+        }
 
         var ticket = _context.AuthTickets.FirstOrDefault(t => t.Id == ticketId);
         if (ticket is null)
-            return NotFound($"Не найден тикет. TicketId: {ticketId}");
+        {
+            _logger.LogError($"Не найден тикет. TicketId: {completeDto.TicketId}");
+            return NotFound($"Не найден тикет.");
+        }
 
         if (ticket.Code != completeDto.Code)
-            return Conflict($"Код не совпадает. Code: {completeDto.Code}");
+        {
+            _logger.LogError($"Код не совпадает. TicketId: {completeDto.TicketId}, Code: {completeDto.Code}");
+            return Conflict($"Код не совпадает.");
+        }
 
-        var user = _context.Users.FirstOrDefault(c => c.Email == ticket.Login);
-        if (user is null)
-            return NotFound($"Пользователь с логином {ticket.Login} не найден");
+        var user = _context.Users.FirstOrDefault(c => c.Email == ticket.Login) ?? new User
+        {
+            Email = ticket.Login,
+        };
 
         user.RefreshToken = JwtHelper.CreateRefreshToken();
         user.RefreshTokenExpires = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.RefreshTokenLifetime);

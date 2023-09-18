@@ -9,4 +9,9 @@ public class TicketDto
     /// Идентификатор тикета
     /// </summary>
     public string TicketId { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Признак нового пользователя
+    /// </summary>
+    public bool IsNewUser { get; set; }
 }
