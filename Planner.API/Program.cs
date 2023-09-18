@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Planner.API;
 using Planner.API.Helpers;
+using Planner.API.Options;
 using Planner.API.Services;
 using Seljmov.AspNet.Commons.Helpers;
 
@@ -11,12 +12,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddOptions<SmtpClientOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(SmtpClientOptions)));
+
+builder.Services.AddOptions<CodeTemplateOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(CodeTemplateOptions)));
+
+builder.Services.AddScoped<EmailSenderService>();
+
 builder.Services.AddSingleton<JwtHelper>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
-
-builder.Services.TryAddSingleton<EmailSenderService>();
 
 var app = builder.BuildWebApplication();
 

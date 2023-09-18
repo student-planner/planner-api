@@ -34,24 +34,4 @@ public class User
     /// Коллекция задач
     /// </summary>
     public virtual ICollection<Goal> Goals { get; set; } = new List<Goal>();
-
-    /// <summary>
-    /// Обновить токен обновления
-    /// </summary>
-    /// <param name="refreshToken">Токен обновления</param>
-    /// <param name="refreshTokenExpires">Дата истечения токена обновления</param>
-    public void UpdateRefreshToken(string refreshToken, DateTime refreshTokenExpires)
-    {
-        RefreshToken = refreshToken;
-        RefreshTokenExpires = refreshTokenExpires;
-    }
-    
-    /// <summary>
-    /// Удалить токен обновления
-    /// </summary>
-    public void ClearRefreshToken()
-    {
-        RefreshToken = null;
-        RefreshTokenExpires = null;
-    }
 }

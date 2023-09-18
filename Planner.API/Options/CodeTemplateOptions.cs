@@ -3,7 +3,20 @@
 /// <summary>
 /// Настройки сообщений
 /// </summary>
-/// <param name="From">От кого</param>
-/// <param name="Subject">Тема письма</param>
-/// <param name="Body">Содержание письма</param>
-public record CodeTemplateOptions(string From, string Subject, string Body);
+public class CodeTemplateOptions
+{
+    /// <summary>
+    /// От кого
+    /// </summary>
+    public string From { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Тема письма
+    /// </summary>
+    public string Subject { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Содержание письма
+    /// </summary>
+    public string Body { get; set; } = string.Empty;
+}
