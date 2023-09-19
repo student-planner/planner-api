@@ -10,17 +10,17 @@ public class AlgorithmItem
     /// <summary>
     /// Крайний срок выполнения
     /// </summary>
-    public DateTime? Deadline { get; set; }
+    public DateTime Deadline { get; set; }
     
     /// <summary>
     /// Трудоёмкость
     /// </summary>
-    public double? Labor { get; set; }
+    public double Labor { get; set; }
     
     /// <summary>
     /// Приоритет
     /// </summary>
-    public int? Priority { get; set; }
+    public int Priority { get; set; }
     
     /// <summary>
     /// Идентификатор самой приоритетной задачи
