@@ -69,6 +69,7 @@ public class AlgorithmImportanceSolver
     /// <returns></returns>
     private static double FindHoursBetweenDates(DateTime first, DateTime second)
     {
-        return second.Subtract(first).TotalMinutes / 60;
+        var first1 = DateTime.Parse("2022-08-25 09:00");
+        return second.Subtract(first1).TotalMinutes / 60;
     }
 }
