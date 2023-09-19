@@ -5,7 +5,12 @@ namespace Planner.AlgorithmPriorityGoals;
 /// Подготовщик данных для планирования
 public class AlgorithmDataPreparer
 {
-    private List<Goal> Goals { get; set; } = new List<Goal>();
+    private List<Goal> _goals { get; set; }
+
+    public AlgorithmDataPreparer(List<Goal> goals)
+    {
+        _goals = goals;
+    }
 
     /// <summary>
     /// Получить подготовленные данные для работы алгоритма
@@ -13,7 +18,7 @@ public class AlgorithmDataPreparer
     /// <returns></returns>
     public List<AlgorithmItem> GetData()
     {
-        return _preparingDataForAlgorithm(Goals).ToList();
+        return _preparingDataForAlgorithm(_goals).ToList();
     }
 
     /// <summary>

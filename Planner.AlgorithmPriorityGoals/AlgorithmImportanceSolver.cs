@@ -25,9 +25,9 @@ public class AlgorithmImportanceSolver
     public List<Guid> GetIdsMostImportantGoals(int goalsCount = 3)
     {
         var items = GetAlgorithmItemsWithImportance();
-        var itemsSortedImportances = new List<double>(items.Keys);
-        itemsSortedImportances.Sort();
-        var taskIds = itemsSortedImportances.OrderByDescending(x => x)
+        var itemsSortedImportance = new List<double>(items.Keys);
+        itemsSortedImportance.Sort();
+        var taskIds = itemsSortedImportance.OrderByDescending(x => x)
             .ToList()
             .GetRange(0, goalsCount);
             
