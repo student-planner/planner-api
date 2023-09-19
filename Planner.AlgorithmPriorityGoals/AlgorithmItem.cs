@@ -25,7 +25,7 @@ public class AlgorithmItem
     /// <summary>
     /// Идентификатор самой приоритетной задачи
     /// </summary>
-    public Guid DependsPriority { get; set; } = Guid.Empty;
+    public int DependsPriority { get; set; }
     
     /// <summary>
     /// Коллекция идентификаторов зависимых задач
