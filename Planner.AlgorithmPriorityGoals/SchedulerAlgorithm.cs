@@ -32,7 +32,7 @@ public class SchedulerAlgorithm
     /// <summary>
     /// Начать планирование
     /// </summary>
-    public void Run()
+    public List<Goal?> Run()
     {
         var dataPreparer = new AlgorithmDataPreparer(_goals);
         var algorithmItems = dataPreparer.GetData();
@@ -40,6 +40,6 @@ public class SchedulerAlgorithm
         var solver = new AlgorithmImportanceSolver(algorithmItems);
         var mostImportantGoalsIds = solver.GetIdsMostImportantGoals();
 
-        var resultGoals = mostImportantGoalsIds.Select(x => _context.Goals.FirstOrDefault(g => g.Id == x)).ToList();
+        return mostImportantGoalsIds.Select(x => _context.Goals.FirstOrDefault(g => g.Id == x)).ToList();
     }
 }
