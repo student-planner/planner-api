@@ -12,27 +12,20 @@ public class SchedulerAlgorithm
     /// Задачи
     /// </summary>
     private List<Goal> _goals { get; set; }
-    
-    /// <summary>
-    /// База данных
-    /// </summary>
-    private readonly DatabaseContext _context;
 
     /// <summary>
     /// Конструктор алгоритма
     /// </summary>
     /// <param name="goals">Задачи</param>
-    /// <param name="context">База данных</param>
-    public SchedulerAlgorithm(List<Goal> goals, DatabaseContext context)
+    public SchedulerAlgorithm(List<Goal> goals)
     {
         _goals = goals;
-        _context = context;
     }
 
     /// <summary>
     /// Начать планирование
     /// </summary>
-    public List<Goal?> Run()
+    public List<Guid> Run()
     {
         var dataPreparer = new AlgorithmDataPreparer(_goals);
         var algorithmItems = dataPreparer.GetData();
@@ -40,6 +33,6 @@ public class SchedulerAlgorithm
         var solver = new AlgorithmImportanceSolver(algorithmItems);
         var mostImportantGoalsIds = solver.GetIdsMostImportantGoals();
 
-        return mostImportantGoalsIds.Select(x => _context.Goals.FirstOrDefault(g => g.Id == x)).ToList();
+        return mostImportantGoalsIds;
     }
 }

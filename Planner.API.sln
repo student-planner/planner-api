@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.Contracts", "Planne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.AlgorithmPriorityGoals", "Planner.AlgorithmPriorityGoals\Planner.AlgorithmPriorityGoals.csproj", "{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
