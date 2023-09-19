@@ -1,6 +1,8 @@
 ﻿namespace Planner.AlgorithmPriorityGoals;
 
-// Алгоритм вычисления самых важных задач
+/// <summary>
+/// Алгоритм вычисления самых важных задач
+/// </summary>
 public class AlgorithmImportanceSolver
 {
     /// Задачи для планирования
