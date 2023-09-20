@@ -6,7 +6,7 @@
 public class AlgorithmImportanceSolver
 {
     /// Задачи для планирования
-    private List<AlgorithmItem> AlgorithmItems { get; }
+    private readonly List<AlgorithmItem> _algorithmItems;
     
     /// <summary>
     /// Конструктор класса
@@ -14,7 +14,7 @@ public class AlgorithmImportanceSolver
     /// <param name="algorithmItems">Подготовленные задачи для работы алгоритма</param>
     public AlgorithmImportanceSolver(List<AlgorithmItem> algorithmItems)
     {
-        AlgorithmItems = algorithmItems;
+        _algorithmItems = algorithmItems;
     }
     
     /// <summary>
@@ -27,7 +27,7 @@ public class AlgorithmImportanceSolver
         var items = GetAlgorithmItemsWithImportance();
         var itemsSortedImportance = new List<double>(items.Keys);
         itemsSortedImportance.Sort();
-        var taskIds = itemsSortedImportance.OrderByDescending(x => x)
+        var taskIds = itemsSortedImportance.OrderByDescending(item => item)
             .ToList()
             .GetRange(0, goalsCount);
             
@@ -40,15 +40,7 @@ public class AlgorithmImportanceSolver
     /// <returns></returns>
     private Dictionary<double, AlgorithmItem> GetAlgorithmItemsWithImportance()
     {
-        var itemsWithImportance = new Dictionary<double, AlgorithmItem>();
-        
-        foreach (var item in AlgorithmItems)
-        {
-            var importance = FindImportance(item);
-            itemsWithImportance.Add(importance, item);
-        }
-        
-        return itemsWithImportance;
+        return _algorithmItems.ToDictionary(FindImportance, item => item);
     }
     
     /// <summary>
@@ -58,17 +50,24 @@ public class AlgorithmImportanceSolver
     /// <returns></returns>
     private static double FindImportance(AlgorithmItem item)
     {
-        return (double)(item.Priority + item.Labor + item.DependsPriority)! / (FindHoursBetweenDates(DateTime.Now, item.Deadline));
+        return (item.Priority + item.DependsPriority + LaborToHours(item.Labor)) / 
+            (FindHoursBetweenDates(DateTime.UtcNow, item.Deadline) + 1);
     }
     
     /// <summary>
-    /// Получить разницу между датами в часах
+    /// Получить разницу между датами в секундах
     /// </summary>
     /// <param name="first">Начало времени</param>
     /// <param name="second">Конец времени</param>
     /// <returns></returns>
     private static double FindHoursBetweenDates(DateTime first, DateTime second)
     {
-        return second.Subtract(first).TotalMinutes / 60;
+        return second.Subtract(first).TotalSeconds;
     }
+    
+    /// <summary>
+    /// Получить трудоёмкость в часах
+    /// </summary>
+    /// <param name="labor">Трудоёмкость в секундах</param>
+    private static double LaborToHours(double labor) => labor / 3600;
 }

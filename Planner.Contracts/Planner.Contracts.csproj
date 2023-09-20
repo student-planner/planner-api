@@ -14,4 +14,8 @@
       <DocumentationFile>bin\Release\net7.0\Planner.Contracts.xml</DocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Planner.Models\Planner.Models.csproj" />
+    </ItemGroup>
+
 </Project>

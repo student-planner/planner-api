@@ -1,4 +1,6 @@
-﻿namespace Planner.Contracts.Goal;
+﻿using Planner.Models;
+
+namespace Planner.Contracts.Goal;
 
 /// <summary>
 /// Модель данных для отображения задач
@@ -26,12 +28,17 @@ public class GoalDto
     public DateTime? Deadline { get; set; }
 
     /// <summary>
-    /// Трудоёмкость
+    /// Трудоёмкость в секундах
     /// </summary>
     public double? Labor { get; set; }
 
     /// <summary>
     /// Приоритет
     /// </summary>
-    public int? Priority { get; set; }
+    public GoalPriority? Priority { get; set; }
+    
+    /// <summary>
+    /// Статус
+    /// </summary>
+    public GoalStatus Status { get; set; }
 }

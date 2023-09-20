@@ -1,5 +1,4 @@
-﻿using Planner.API;
-using Planner.Models;
+﻿using Planner.Models;
 
 namespace Planner.AlgorithmPriorityGoals;
 

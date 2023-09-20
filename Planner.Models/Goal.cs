@@ -26,7 +26,7 @@ public class Goal
     public DateTime? Deadline { get; set; }
     
     /// <summary>
-    /// Трудоёмкость
+    /// Трудоёмкость в секундах
     /// </summary>
     public double? Labor { get; set; }
     
@@ -34,6 +34,11 @@ public class Goal
     /// Приоритет
     /// </summary>
     public GoalPriority? Priority { get; set; }
+    
+    /// <summary>
+    /// Статус
+    /// </summary>
+    public GoalStatus Status { get; set; }
     
     /// <summary>
     /// Коллекция идентификаторов подзадач

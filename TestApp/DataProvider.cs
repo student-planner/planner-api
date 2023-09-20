@@ -1,31 +1,10 @@
-using System.Text.Json;
-using Planner.AlgorithmPriorityGoals;
 using Planner.Models;
-using Xunit.Abstractions;
 
-namespace TestProject1;
+namespace TestApp;
 
-public class UnitTest1
+public class DataProvider
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    [Fact]
-    public void Test1()
-    {
-        var data = _testGoalsBase1
-            .Where(goal => !goal.SubGoalsIds.Any() && goal.Status != GoalStatus.Done && goal.Status != GoalStatus.Overdue)
-            .ToList();
-        var alg = new SchedulerAlgorithm(data);
-        var result = alg.Run();
-        
-        var goalsImportant = result
-            .Select(id => _testGoalsBase1.FirstOrDefault(goal => goal.Id == id)).ToList();
-        
-        var json = JsonSerializer.Serialize(goalsImportant);
-        _testOutputHelper.WriteLine(json);
-    }
-
-    private readonly List<Goal> _testGoalsBase1 = new()
+    public static List<Goal> GetData() => new()
     {
         new Goal()
         {
@@ -98,7 +77,7 @@ public class UnitTest1
         new Goal()
         {
             Id = Guid.Parse("00000000-0000-0000-0000-000000000007"),
-            Name  = "Введение",
+            Name = "Введение",
             Deadline = DateTime.Parse("2023-11-01 10:00"),
             Labor = 60 * 60 * 1.5,
             Priority = GoalPriority.High,
@@ -270,7 +249,7 @@ public class UnitTest1
             Name = "Пройти курс по Базам Данных",
             Deadline = DateTime.Parse("2023-12-25 10:00"),
             Priority = GoalPriority.High,
-            DependGoalsIds = new List<Guid>()
+            SubGoalsIds = new List<Guid>()
             {
                 Guid.Parse("00000000-0000-0000-0000-000000000001"),
                 Guid.Parse("00000000-0000-0000-0000-000000000002"),
@@ -281,9 +260,4 @@ public class UnitTest1
             },
         },
     };
-
-    public UnitTest1(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
 }

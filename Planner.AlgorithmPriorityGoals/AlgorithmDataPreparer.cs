@@ -5,7 +5,7 @@ namespace Planner.AlgorithmPriorityGoals;
 /// Подготовщик данных для планирования
 public class AlgorithmDataPreparer
 {
-    private List<Goal> _goals { get; set; }
+    private readonly List<Goal> _goals;
 
     public AlgorithmDataPreparer(List<Goal> goals)
     {
@@ -18,7 +18,7 @@ public class AlgorithmDataPreparer
     /// <returns></returns>
     public List<AlgorithmItem> GetData()
     {
-        return _preparingDataForAlgorithm(_goals).ToList();
+        return PreparingDataForAlgorithm(_goals).ToList();
     }
 
     /// <summary>
@@ -26,19 +26,19 @@ public class AlgorithmDataPreparer
     /// </summary>
     /// <param name="goals">Список задач</param>
     /// <returns></returns>
-    public static IEnumerable<AlgorithmItem> _preparingDataForAlgorithm(List<Goal> goals)
+    private static IEnumerable<AlgorithmItem> PreparingDataForAlgorithm(List<Goal> goals)
     {
-        var goalsDependsPriorities = _getTasksDependsPriorities(goals);
-        var goalForPlanning = _getTasksForPlanning(goals).ToList();
+        var goalForPlanning = GetTasksForPlanning(goals).ToList();
+        var goalsDependsPriorities = GetTasksDependsPriorities(goals);
 
         return goalForPlanning.Select(goal => new AlgorithmItem()
         {
             Id = goal.Id,
-            Deadline = (DateTime)goal.Deadline!,
-            Labor = (double)goal.Labor!,
-            Priority = (int)goal.Priority!,
+            Deadline = goal.Deadline!.Value,
+            Labor = goal.Labor ?? 0,
+            Priority = (int)(goal.Priority ?? GoalPriority.ExtraHigh),
             DependsIds = goal.DependGoalsIds,
-            DependsPriority = goalsDependsPriorities[goal.Id]
+            DependsPriority = goalsDependsPriorities.GetValueOrDefault(goal.Id, 0),
         }).ToList();
     }
     
@@ -47,11 +47,10 @@ public class AlgorithmDataPreparer
     /// </summary>
     /// <param name="goals">Список задач</param>
     /// <returns></returns>
-    public static IEnumerable<Goal> _getTasksForPlanning(List<Goal> goals)
+    private static IEnumerable<Goal> GetTasksForPlanning(List<Goal> goals)
     {
         var goalsIds = goals.Select(goal => goal.Id);
-        return goals.Where(goal =>
-            goal.DependGoalsIds.Any(id => goalsIds.Contains(id)));
+        return goals.Where(goal => !goal.DependGoalsIds.Any(id => goalsIds.Contains(id)));
     }
     
     /// <summary>
@@ -59,30 +58,20 @@ public class AlgorithmDataPreparer
     /// </summary>
     /// <param name="goals">Список задач</param>
     /// <returns></returns>
-    public static Dictionary<Guid, int> _getTasksDependsPriorities(List<Goal> goals)
+    private static Dictionary<Guid, int> GetTasksDependsPriorities(List<Goal> goals)
     {
-        Dictionary<Guid, int> dependsPriorities = new Dictionary<Guid, int>();
-        Dictionary<Guid, Goal> goalsByIds = new Dictionary<Guid, Goal>();
-
-        foreach (var goal in goals)
-        {
-            dependsPriorities.Add(goal.Id, 0);
-            goalsByIds.Add(goal.Id, goal);
-        }
-
-        var isDependsIds = goals
-            .Where(goal => goal.DependGoalsIds.Count > 0)
+        var hasDependIds = goals
+            .Where(goal => goal.DependGoalsIds.Any())
             .SelectMany(goal => goal.DependGoalsIds)
             .ToList();
 
-        foreach (var dependsId in isDependsIds)
-        {
-            if (goalsByIds.ContainsKey(dependsId))
-            {
-                dependsPriorities[dependsId]++;
-            }
-        }
+        var dependIdCount = hasDependIds
+            .GroupBy(item => item)
+            .ToDictionary(item => item.Key, item => item.Count());
 
-        return dependsPriorities;
+        var dependPrioritiesByTaskId = dependIdCount.Keys
+            .ToDictionary(item => item, item => dependIdCount[item] * 2);
+
+        return dependPrioritiesByTaskId;
     }
 }

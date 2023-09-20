@@ -50,11 +50,12 @@ public class GoalController : Controller
             .Select(item => new GoalDto
             {
                 Id = item.Id,
-                Deadline = item.Deadline,
-                Description = item.Description,
-                Labor = item.Labor,
                 Name = item.Name,
-                Priority = (int?)item.Priority
+                Description = item.Description,
+                Deadline = item.Deadline,
+                Labor = item.Labor,
+                Priority = item.Priority,
+                Status = item.Status,
             }).ToListAsync());
     }
 
@@ -84,11 +85,12 @@ public class GoalController : Controller
         var goalDto = new GoalDto
         {
             Id = goal.Id,
-            Deadline = goal.Deadline,
-            Priority = (int?)goal.Priority,
             Name = goal.Name,
+            Description = goal.Description,
             Labor = goal.Labor,
-            Description = goal.Description
+            Deadline = goal.Deadline,
+            Priority = goal.Priority,
+            Status = goal.Status,
         };
 
         return Ok(goalDto);
@@ -123,8 +125,9 @@ public class GoalController : Controller
         {
             var newGoal = new Goal
             {
-                Description = putDto.Description,
                 Name = putDto.Name,
+                Description = putDto.Description,
+                Status = GoalStatus.New,
                 UserId = userInfo.GuidId,
             };
 

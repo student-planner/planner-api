@@ -31,4 +31,10 @@ public class AlgorithmItem
     /// Коллекция идентификаторов зависимых задач
     /// </summary>
     public ICollection<Guid> DependsIds { get; set; } = new List<Guid>();
+    
+    /// <summary>
+    /// Преобразовать в строку
+    /// </summary>
+    public override string ToString() =>
+        $"AlgorithmItem: Id: {Id}, Deadline: {Deadline}, Labor: {Labor}, Priority: {Priority}, DependsPriority: {DependsPriority}, DependsIds: {DependsIds}";
 }
