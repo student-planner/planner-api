@@ -31,6 +31,11 @@ public class User
     public DateTime Created { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Описание устройства
+    /// </summary>
+    public string? DeviceDescription { get; set; }
+    
+    /// <summary>
     /// Коллекция задач
     /// </summary>
     public virtual ICollection<Goal> Goals { get; set; } = new List<Goal>();

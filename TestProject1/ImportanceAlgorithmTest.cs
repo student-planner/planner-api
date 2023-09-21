@@ -5,23 +5,21 @@ using Xunit.Abstractions;
 
 namespace TestProject1;
 
-public class UnitTest1
+public class ImportanceAlgorithmTest
 {
     private readonly ITestOutputHelper _testOutputHelper;
 
     [Fact]
     public void Test1()
     {
-        var data = _testGoalsBase1
+        var data = _testGoalsBase1.ToList();
+        var goals = _testGoalsBase1
             .Where(goal => !goal.SubGoalsIds.Any() && goal.Status != GoalStatus.Done && goal.Status != GoalStatus.Overdue)
             .ToList();
-        var alg = new ImportanceAlgorithm(data);
-        var result = alg.Run();
-        
-        var goalsImportant = result
-            .Select(id => _testGoalsBase1.FirstOrDefault(goal => goal.Id == id)).ToList();
-        
-        var json = JsonSerializer.Serialize(goalsImportant);
+        var alg = new ImportanceAlgorithm();
+        var result = alg.Run(goals).ToList();
+
+        var json = JsonSerializer.Serialize(result);
         _testOutputHelper.WriteLine(json);
     }
 
@@ -282,7 +280,7 @@ public class UnitTest1
         },
     };
 
-    public UnitTest1(ITestOutputHelper testOutputHelper)
+    public ImportanceAlgorithmTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
     }

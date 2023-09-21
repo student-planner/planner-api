@@ -26,6 +26,11 @@ public class Goal
     public DateTime Deadline { get; set; } = DateTime.UtcNow;
     
     /// <summary>
+    /// Дата создания
+    /// </summary>
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    
+    /// <summary>
     /// Трудоёмкость в секундах
     /// </summary>
     public double Labor { get; set; } = 0;

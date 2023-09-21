@@ -44,17 +44,18 @@ public sealed class DatabaseContext : DbContext
     /// <param name="modelBuilder">Конструктор сущностей</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>(e =>
+        modelBuilder.Entity<User>(entity =>
         {
-            e.HasKey(e => e.Id);
-            e.Property(e => e.Email).IsRequired();
-            e.Property(e => e.RefreshToken);
-            e.Property(e => e.RefreshTokenExpires);
-            e.Property(e => e.Created).IsRequired();
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired();
+            entity.Property(e => e.RefreshToken);
+            entity.Property(e => e.RefreshTokenExpires);
+            entity.Property(e => e.Created).IsRequired().HasDefaultValueSql("now()");
+            entity.Property(e => e.DeviceDescription);
 
-            e.HasMany(u => u.Goals).WithOne(g => g.User).HasForeignKey(g => g.UserId);
+            entity.HasMany(u => u.Goals).WithOne(g => g.User).HasForeignKey(g => g.UserId);
 
-            e.HasData(new User
+            entity.HasData(new User
             {
                 Id = Guid.NewGuid(),
                 Email = "seljmov@list.ru",
@@ -62,28 +63,29 @@ public sealed class DatabaseContext : DbContext
             });
         });
 
-        modelBuilder.Entity<Goal>(e =>
+        modelBuilder.Entity<Goal>(entity =>
         {
-            e.HasKey(e => e.Id);
-            e.Property(e => e.Name).IsRequired();
-            e.Property(e => e.Description).IsRequired();
-            e.Property(e => e.Deadline).IsRequired();
-            e.Property(e => e.Labor).IsRequired();
-            e.Property(e => e.Priority).IsRequired();
-            e.Property(e => e.Status).IsRequired();
-            e.Property(e => e.SubGoalsIds).IsRequired();
-            e.Property(e => e.DependGoalsIds).IsRequired();
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.Deadline).IsRequired();
+            entity.Property(e => e.Created).IsRequired().HasDefaultValueSql("now()");
+            entity.Property(e => e.Labor).IsRequired();
+            entity.Property(e => e.Priority).IsRequired();
+            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.SubGoalsIds).IsRequired();
+            entity.Property(e => e.DependGoalsIds).IsRequired();
 
-            e.HasOne(g => g.User).WithMany(u => u.Goals).HasForeignKey(g => g.UserId);
+            entity.HasOne(g => g.User).WithMany(u => u.Goals).HasForeignKey(g => g.UserId);
         });
 
-        modelBuilder.Entity<AuthTicket>(e =>
+        modelBuilder.Entity<AuthTicket>(entity =>
         {
-            e.HasKey(e => e.Id);
-            e.Property(e => e.Code).IsRequired();
-            e.Property(e => e.Login).IsRequired();
-            e.Property(e => e.DeviceDescription);
-            e.Property(e => e.ExpiresAt).IsRequired();
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Code).IsRequired();
+            entity.Property(e => e.Login).IsRequired();
+            entity.Property(e => e.DeviceDescription);
+            entity.Property(e => e.ExpiresAt).IsRequired();
         });
     }
 }
