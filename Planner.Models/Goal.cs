@@ -23,27 +23,37 @@ public class Goal
     /// <summary>
     /// Крайний срок выполнения
     /// </summary>
-    public DateTime? Deadline { get; set; }
+    public DateTime Deadline { get; set; } = DateTime.UtcNow;
     
     /// <summary>
-    /// Трудоёмкость
+    /// Дата создания
     /// </summary>
-    public double? Labor { get; set; }
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    
+    /// <summary>
+    /// Трудоёмкость в секундах
+    /// </summary>
+    public double Labor { get; set; } = 0;
     
     /// <summary>
     /// Приоритет
     /// </summary>
-    public GoalPriority? Priority { get; set; }
+    public GoalPriority Priority { get; set; } = GoalPriority.Low;
+    
+    /// <summary>
+    /// Статус
+    /// </summary>
+    public GoalStatus Status { get; set; }
     
     /// <summary>
     /// Коллекция идентификаторов подзадач
     /// </summary>
-    public ICollection<Guid> SubGoalsIds { get; set; } = new List<Guid>();
+    public List<Guid> SubGoalsIds { get; set; } = new();
     
     /// <summary>
     /// Коллекция идентификаторов зависимых задач
     /// </summary>
-    public ICollection<Guid> DependGoalsIds { get; set; } = new List<Guid>();
+    public List<Guid> DependGoalsIds { get; set; } = new();
     
     /// <summary>
     /// Идентификатор пользователя, кому принадлежит задача

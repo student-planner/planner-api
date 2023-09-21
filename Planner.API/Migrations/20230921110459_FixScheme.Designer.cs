@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Planner.API;
@@ -12,9 +13,11 @@ using Planner.API;
 namespace Planner.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230921110459_FixScheme")]
+    partial class FixScheme
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,11 +56,6 @@ namespace Planner.API.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("Deadline")
                         .HasColumnType("timestamp with time zone");
@@ -104,12 +102,7 @@ namespace Planner.API.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<string>("DeviceDescription")
-                        .HasColumnType("text");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -128,8 +121,8 @@ namespace Planner.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("32e5076f-9e47-4ab6-87fc-aebcc24e7209"),
-                            Created = new DateTime(2023, 9, 21, 18, 9, 44, 330, DateTimeKind.Utc).AddTicks(3210),
+                            Id = new Guid("533f6305-3035-45dc-ab3a-2598a93db2e0"),
+                            Created = new DateTime(2023, 9, 21, 11, 4, 59, 505, DateTimeKind.Utc).AddTicks(4830),
                             Email = "seljmov@list.ru"
                         });
                 });

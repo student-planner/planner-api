@@ -5,6 +5,7 @@ using Planner.API.Helpers;
 using Planner.Contracts.Goal;
 using Planner.Models;
 using System.Security.Claims;
+using Planner.AlgorithmPriorityGoals;
 
 namespace Planner.API.Controllers;
 
@@ -50,11 +51,12 @@ public class GoalController : Controller
             .Select(item => new GoalDto
             {
                 Id = item.Id,
-                Deadline = item.Deadline,
-                Description = item.Description,
-                Labor = item.Labor,
                 Name = item.Name,
-                Priority = (int?)item.Priority
+                Description = item.Description,
+                Deadline = item.Deadline,
+                Labor = item.Labor,
+                Priority = item.Priority,
+                Status = item.Status,
             }).ToListAsync());
     }
 
@@ -84,11 +86,14 @@ public class GoalController : Controller
         var goalDto = new GoalDto
         {
             Id = goal.Id,
-            Deadline = goal.Deadline,
-            Priority = (int?)goal.Priority,
             Name = goal.Name,
+            Description = goal.Description,
             Labor = goal.Labor,
-            Description = goal.Description
+            Deadline = goal.Deadline,
+            Priority = goal.Priority,
+            Status = goal.Status,
+            SubGoalsIds = goal.SubGoalsIds,
+            DependGoalsIds = goal.DependGoalsIds,
         };
 
         return Ok(goalDto);
@@ -123,8 +128,14 @@ public class GoalController : Controller
         {
             var newGoal = new Goal
             {
-                Description = putDto.Description,
                 Name = putDto.Name,
+                Description = putDto.Description,
+                Deadline = putDto.Deadline,
+                Labor = putDto.Labor,
+                Priority = putDto.Priority,
+                Status = GoalStatus.New,
+                SubGoalsIds = putDto.SubGoalsIds,
+                DependGoalsIds = putDto.DependGoalsIds,
                 UserId = userInfo.GuidId,
             };
 
@@ -140,6 +151,11 @@ public class GoalController : Controller
 
         goal.Name = putDto.Name;
         goal.Description = putDto.Description;
+        goal.Deadline = putDto.Deadline;
+        goal.Labor = putDto.Labor;
+        goal.Priority = putDto.Priority;
+        goal.SubGoalsIds = putDto.SubGoalsIds;
+        goal.DependGoalsIds = putDto.DependGoalsIds;
 
         _context.Goals.Update(goal);
         await _context.SaveChangesAsync();
@@ -174,6 +190,40 @@ public class GoalController : Controller
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Получить список наиболее важных задач на момент запроса
+    /// </summary>
+    /// <param name="algorithm">Алгоритм для вычисления приоритета задач</param>
+    /// <response code="200">Список задач</response>
+    /// <response code="401">Токен доступа истек</response>
+    /// <response code="500">Ошибка сервера</response>
+    /// <returns>Список задач</returns>
+    [Route("important"), HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GoalDto>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetImportant([FromServices] IImportanceAlgorithm algorithm)
+    {
+        var userInfo = GetAuthUserInfo();
+        if (userInfo is null)
+            return Unauthorized();
+        
+        var goals = await _context.Goals.Where(x => x.UserId == userInfo.GuidId).ToListAsync();
+        var result = algorithm.Run(goals);
+        return Ok(result.Select(goal => new GoalDto
+        {
+            Id = goal.Id,
+            Name = goal.Name,
+            Description = goal.Description,
+            Deadline = goal.Deadline,
+            Labor = goal.Labor,
+            Priority = goal.Priority,
+            Status = goal.Status,
+            SubGoalsIds = goal.SubGoalsIds,
+            DependGoalsIds = goal.DependGoalsIds,
+        }));
     }
     
     #region Claims

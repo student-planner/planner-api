@@ -119,6 +119,7 @@ public class AuthController : ControllerBase
 
         user.RefreshToken = JwtHelper.CreateRefreshToken();
         user.RefreshTokenExpires = DateTime.UtcNow.AddMinutes(_jwtOptions.Value.RefreshTokenLifetime);
+        user.DeviceDescription = ticket.DeviceDescription;
         _context.Users.Update(user);
         _context.AuthTickets.Remove(ticket);
         await _context.SaveChangesAsync();

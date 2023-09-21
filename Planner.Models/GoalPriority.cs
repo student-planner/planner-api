@@ -8,25 +8,25 @@ public enum GoalPriority
     /// <summary>
     /// Очень низкий
     /// </summary>
-    ExtraLow,
+    ExtraLow = 1,
     
     /// <summary>
     /// Низкий
     /// </summary>
-    Low,
+    Low = 3,
     
     /// <summary>
     /// Средний
     /// </summary>
-    Medium,
+    Medium = 7,
     
     /// <summary>
     /// Высокий
     /// </summary>
-    High,
+    High = 13,
     
     /// <summary>
     /// Очень высокий
     /// </summary>
-    ExtraHigh,
+    ExtraHigh = 21,
 }
