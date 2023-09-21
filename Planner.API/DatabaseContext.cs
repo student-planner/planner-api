@@ -67,11 +67,12 @@ public sealed class DatabaseContext : DbContext
             e.HasKey(e => e.Id);
             e.Property(e => e.Name).IsRequired();
             e.Property(e => e.Description).IsRequired();
-            e.Property(e => e.Deadline);
-            e.Property(e => e.Labor);
-            e.Property(e => e.Priority);
-            e.Ignore(e => e.SubGoalsIds);
-            e.Ignore(e => e.DependGoalsIds);
+            e.Property(e => e.Deadline).IsRequired();
+            e.Property(e => e.Labor).IsRequired();
+            e.Property(e => e.Priority).IsRequired();
+            e.Property(e => e.Status).IsRequired();
+            e.Property(e => e.SubGoalsIds).IsRequired();
+            e.Property(e => e.DependGoalsIds).IsRequired();
 
             e.HasOne(g => g.User).WithMany(u => u.Goals).HasForeignKey(g => g.UserId);
         });

@@ -34,9 +34,9 @@ public class AlgorithmDataPreparer
         return goalForPlanning.Select(goal => new AlgorithmItem()
         {
             Id = goal.Id,
-            Deadline = goal.Deadline!.Value,
-            Labor = goal.Labor ?? 0,
-            Priority = (int)(goal.Priority ?? GoalPriority.ExtraHigh),
+            Deadline = goal.Deadline,
+            Labor = goal.Labor,
+            Priority = (int)goal.Priority,
             DependsIds = goal.DependGoalsIds,
             DependsPriority = goalsDependsPriorities.GetValueOrDefault(goal.Id, 0),
         }).ToList();

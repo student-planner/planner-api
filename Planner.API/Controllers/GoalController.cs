@@ -91,6 +91,8 @@ public class GoalController : Controller
             Deadline = goal.Deadline,
             Priority = goal.Priority,
             Status = goal.Status,
+            SubGoalsIds = goal.SubGoalsIds,
+            DependGoalsIds = goal.DependGoalsIds,
         };
 
         return Ok(goalDto);
@@ -127,7 +129,12 @@ public class GoalController : Controller
             {
                 Name = putDto.Name,
                 Description = putDto.Description,
+                Deadline = putDto.Deadline,
+                Labor = putDto.Labor,
+                Priority = putDto.Priority,
                 Status = GoalStatus.New,
+                SubGoalsIds = putDto.SubGoalsIds,
+                DependGoalsIds = putDto.DependGoalsIds,
                 UserId = userInfo.GuidId,
             };
 
@@ -143,6 +150,11 @@ public class GoalController : Controller
 
         goal.Name = putDto.Name;
         goal.Description = putDto.Description;
+        goal.Deadline = putDto.Deadline;
+        goal.Labor = putDto.Labor;
+        goal.Priority = putDto.Priority;
+        goal.SubGoalsIds = putDto.SubGoalsIds;
+        goal.DependGoalsIds = putDto.DependGoalsIds;
 
         _context.Goals.Update(goal);
         await _context.SaveChangesAsync();
