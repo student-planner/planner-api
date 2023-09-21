@@ -15,7 +15,7 @@ public class UnitTest1
         var data = _testGoalsBase1
             .Where(goal => !goal.SubGoalsIds.Any() && goal.Status != GoalStatus.Done && goal.Status != GoalStatus.Overdue)
             .ToList();
-        var alg = new SchedulerAlgorithm(data);
+        var alg = new ImportanceAlgorithm(data);
         var result = alg.Run();
         
         var goalsImportant = result

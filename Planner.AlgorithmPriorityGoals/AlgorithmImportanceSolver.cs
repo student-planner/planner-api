@@ -18,20 +18,20 @@ public class AlgorithmImportanceSolver
     }
     
     /// <summary>
-    /// олучить идентификаторы самых важных задач
+    /// Получить идентификаторы самых важных задач
     /// </summary>
-    /// <param name="goalsCount">Количество задач</param>
+    /// <param name="neededGoalsCount">Количество задач</param>
     /// <returns></returns>
-    public List<Guid> GetIdsMostImportantGoals(int goalsCount = 3)
+    public IEnumerable<Guid> GetIdsMostImportantGoals(int neededGoalsCount)
     {
         var items = GetAlgorithmItemsWithImportance();
         var itemsSortedImportance = new List<double>(items.Keys);
         itemsSortedImportance.Sort();
         var taskIds = itemsSortedImportance.OrderByDescending(item => item)
             .ToList()
-            .GetRange(0, goalsCount);
-            
-        return taskIds.Select(key => items[key]!.Id).ToList();
+            .GetRange(0, neededGoalsCount);
+
+        return taskIds.Select(key => items[key].Id);
     }
     
     /// <summary>

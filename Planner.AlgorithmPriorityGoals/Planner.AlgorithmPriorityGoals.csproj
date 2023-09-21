@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Planner.API\Planner.API.csproj" />
       <ProjectReference Include="..\Planner.Models\Planner.Models.csproj" />
     </ItemGroup>
 

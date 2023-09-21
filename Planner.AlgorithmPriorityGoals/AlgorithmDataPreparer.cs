@@ -5,9 +5,9 @@ namespace Planner.AlgorithmPriorityGoals;
 /// Подготовщик данных для планирования
 public class AlgorithmDataPreparer
 {
-    private readonly List<Goal> _goals;
+    private readonly IReadOnlyCollection<Goal> _goals;
 
-    public AlgorithmDataPreparer(List<Goal> goals)
+    public AlgorithmDataPreparer(IReadOnlyCollection<Goal> goals)
     {
         _goals = goals;
     }
@@ -26,7 +26,7 @@ public class AlgorithmDataPreparer
     /// </summary>
     /// <param name="goals">Список задач</param>
     /// <returns></returns>
-    private static IEnumerable<AlgorithmItem> PreparingDataForAlgorithm(List<Goal> goals)
+    private static IEnumerable<AlgorithmItem> PreparingDataForAlgorithm(IReadOnlyCollection<Goal> goals)
     {
         var goalForPlanning = GetTasksForPlanning(goals).ToList();
         var goalsDependsPriorities = GetTasksDependsPriorities(goals);
@@ -46,8 +46,8 @@ public class AlgorithmDataPreparer
     /// Получить данные, которые можно запланировать
     /// </summary>
     /// <param name="goals">Список задач</param>
-    /// <returns></returns>
-    private static IEnumerable<Goal> GetTasksForPlanning(List<Goal> goals)
+    /// <returns>Коллекция задач, которые можно запланировать</returns>
+    private static IEnumerable<Goal> GetTasksForPlanning(IReadOnlyCollection<Goal> goals)
     {
         var goalsIds = goals.Select(goal => goal.Id);
         return goals.Where(goal => !goal.DependGoalsIds.Any(id => goalsIds.Contains(id)));
@@ -57,8 +57,8 @@ public class AlgorithmDataPreparer
     /// Получить идентификаторы заказов, от которых зависят другие заказы с их приоритетом зависимости
     /// </summary>
     /// <param name="goals">Список задач</param>
-    /// <returns></returns>
-    private static Dictionary<Guid, int> GetTasksDependsPriorities(List<Goal> goals)
+    /// <returns>Коллекция идентификаторов заказов, от которых зависят другие заказы с их приоритетом зависимости</returns>
+    private static Dictionary<Guid, int> GetTasksDependsPriorities(IEnumerable<Goal> goals)
     {
         var hasDependIds = goals
             .Where(goal => goal.DependGoalsIds.Any())

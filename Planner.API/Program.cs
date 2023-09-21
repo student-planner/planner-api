@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Planner.AlgorithmPriorityGoals;
 using Planner.API;
 using Planner.API.Helpers;
 using Planner.API.Options;
@@ -21,6 +22,8 @@ builder.Services.AddOptions<CodeTemplateOptions>()
 builder.Services.AddScoped<EmailSenderService>();
 
 builder.Services.AddSingleton<JwtHelper>();
+
+builder.Services.AddScoped<IImportanceAlgorithm, ImportanceAlgorithm>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
