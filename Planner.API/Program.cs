@@ -25,6 +25,8 @@ builder.Services.AddSingleton<JwtHelper>();
 
 builder.Services.AddScoped<IImportanceAlgorithm, ImportanceAlgorithm>();
 
+builder.Services.AddHostedService<CheckGoalsStatusService>();
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
 
