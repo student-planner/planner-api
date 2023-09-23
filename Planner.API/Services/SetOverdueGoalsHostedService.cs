@@ -9,11 +9,9 @@ namespace Planner.API.Services;
 /// </summary>
 public class SetOverdueGoalsHostedService : IHostedService
 {
-    private ILogger<SetOverdueGoalsHostedService> _logger;
-    private readonly DatabaseContext _context;
     private const int ServiceDefaultDelay = 1;
+    private readonly DatabaseContext _context;
     private readonly IServiceProvider _services;
-
     private readonly TimeSpan _period;
     private Timer _timer;
 
@@ -22,7 +20,7 @@ public class SetOverdueGoalsHostedService : IHostedService
     /// </summary>
     /// <param name="configuration">Интерфейс конфигурации app</param>
     /// <param name="services">Провайдер app</param>
-    /// <exception cref="ArgumentException">Число из конфигурации не получено</exception>
+    /// <exception cref="ArgumentException">Период времени проверки из конфигурации не получено</exception>
     /// <exception cref="ArgumentNullException">Проблемы с провайдером</exception>
     public SetOverdueGoalsHostedService(IConfiguration configuration, IServiceProvider services)
     {
@@ -36,15 +34,12 @@ public class SetOverdueGoalsHostedService : IHostedService
     
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("{time}: Goal checking service has started.", DateTime.UtcNow);
         _timer = new Timer(SetOverdueGoals, null, TimeSpan.Zero, _period);
-
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("{time}: Goal checking service stopped.", DateTime.UtcNow);
         _timer?.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }
@@ -65,8 +60,6 @@ public class SetOverdueGoalsHostedService : IHostedService
                 goal.Status = GoalStatus.Overdue;
                 _context.Update(goal);
                 _context.SaveChangesAsync();
-        
-                _logger.LogInformation($"Goal {goal.Id} is overdue. Her status has been changed to {GoalStatus.Overdue} in {DateTime.UtcNow}");
             }));
             await Task.WhenAll(tasks);
         }
