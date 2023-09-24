@@ -3,7 +3,7 @@ using Planner.AlgorithmPriorityGoals;
 using Planner.Models;
 using Xunit.Abstractions;
 
-namespace TestProject1;
+namespace Planner.GoalsPriorityAlgorithm.Tests;
 
 public class ImportanceAlgorithmTest
 {
@@ -12,7 +12,6 @@ public class ImportanceAlgorithmTest
     [Fact]
     public void Test1()
     {
-        var data = _testGoalsBase1.ToList();
         var goals = _testGoalsBase1
             .Where(goal => !goal.SubGoalsIds.Any() && goal.Status != GoalStatus.Done && goal.Status != GoalStatus.Overdue)
             .ToList();

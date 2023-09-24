@@ -55,13 +55,12 @@ public class SetOverdueGoalsHostedService : IHostedService
         try 
         {
             var goals = await context.Goals.Where(goal => goal.Deadline <= DateTime.UtcNow).ToListAsync();
-            var tasks = goals.Select(goal => Task.Factory.StartNew(() =>
+            foreach (var goal in goals)
             {
                 goal.Status = GoalStatus.Overdue;
                 context.Update(goal);
-                context.SaveChangesAsync();
-            }));
-            await Task.WhenAll(tasks);
+            }
+            await context.SaveChangesAsync();
         }
         catch (Exception e)
         {

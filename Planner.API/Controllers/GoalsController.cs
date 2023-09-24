@@ -15,17 +15,17 @@ namespace Planner.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class GoalController : Controller
+public class GoalsController : Controller
 {
     private readonly DatabaseContext _context;
     private readonly JwtHelper _jwtHelper;
 
     /// <summary>
-    /// Конструктор класса <see cref="GoalController"/>
+    /// Конструктор класса <see cref="GoalsController"/>
     /// </summary>
     /// <param name="context"></param>
     /// <param name="jwtHelper"></param>
-    public GoalController(DatabaseContext context, JwtHelper jwtHelper)
+    public GoalsController(DatabaseContext context, JwtHelper jwtHelper)
     {
         _context = context;
         _jwtHelper = jwtHelper;
@@ -38,7 +38,7 @@ public class GoalController : Controller
     /// <response code="401">Токен доступа истек</response>
     /// <response code="500">Ошибка сервера</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(List<GoalDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(List<GoalImportantDto>))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get()
@@ -47,71 +47,131 @@ public class GoalController : Controller
         if (userInfo is null)
             return Unauthorized();
 
-        return Ok(await _context.Goals.Where(x => x.UserId == userInfo.GuidId)
-            .Select(item => new GoalDto
+        var goals = await _context.Goals.Where(goal => goal.UserId == userInfo.GuidId)
+            .Select(item => new GoalBaseDto
             {
                 Id = item.Id,
                 Name = item.Name,
                 Description = item.Description,
                 Deadline = item.Deadline,
-                Labor = item.Labor,
-                Priority = item.Priority,
                 Status = item.Status,
-            }).ToListAsync());
+            }).ToListAsync();
+        
+        goals.Sort((a, b) => ((int)a.Status).CompareTo((int)(b.Status)));
+        return Ok(goals);
     }
-
+    
     /// <summary>
-    /// Получить задачу
+    /// Получить задачу с подробной информацией
     /// </summary>
     /// <param name="id">Идентификатор задачи</param>
-    /// <response code="200">Задач</response>
+    /// <response code="200">Задача</response>
     /// <response code="401">Токен доступа истек</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [Route("{id:guid}"), HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GoalDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GoalDetailedDto))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetGoalById([FromRoute] Guid id)
+    public async Task<IActionResult> GetDetailed([FromRoute] Guid id)
     {
         var userInfo = GetAuthUserInfo();
         if (userInfo is null)
             return Unauthorized();
 
-        var goal = await _context.Goals.FirstOrDefaultAsync(x => x.Id == id);
+        var goal = await _context.Goals.FirstOrDefaultAsync(goal => goal.Id == id);
         if (goal is null)
             return NotFound();
 
-        var goalDto = new GoalDto
+        var acceptedStatuses = new[] { GoalStatus.New, GoalStatus.InProgress };
+        var subGoals =  !goal.SubGoalsIds.Any()
+            ? new List<Goal>()
+            : await _context.Goals
+                .Where(item => goal.SubGoalsIds.Contains(item.Id) && acceptedStatuses.Contains(item.Status))
+                .ToListAsync();
+        
+        var goalsById = await _context.Goals.ToDictionaryAsync(x => x.Id);
+        var keys = goalsById.Keys;
+        
+        var goalDto = new GoalDetailedDto
         {
             Id = goal.Id,
             Name = goal.Name,
             Description = goal.Description,
-            Labor = goal.Labor,
             Deadline = goal.Deadline,
-            Priority = goal.Priority,
+            Labor = CalculateLaborArithmeticMean(subGoals, goal.Labor),
+            Priority = CalculatePrioritiesArithmeticMean(subGoals, goal.Priority),
             Status = goal.Status,
-            SubGoalsIds = goal.SubGoalsIds,
-            DependGoalsIds = goal.DependGoalsIds,
+            SubGoals = goal.SubGoalsIds
+                .Where(goalId => keys.Contains(goalId))
+                .Select(goalId => goalsById[goalId])
+                .Select(item => new GoalBaseDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Description = item.Description,
+                    Deadline = item.Deadline,
+                    Status = item.Status,
+                }).ToList(),
+            DependGoals = goal.DependGoalsIds
+                .Where(goalId => keys.Contains(goalId))
+                .Select(goalId => goalsById[goalId])
+                .Select(item => new GoalBaseDto
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Description = item.Description,
+                    Deadline = item.Deadline,
+                    Status = item.Status,
+                }).ToList(),
         };
 
         return Ok(goalDto);
     }
-
+    
+    private static double CalculateLaborArithmeticMean(IReadOnlyCollection<Goal> goals, double goalLabor)
+    {
+        if (goals.Count == 0) return goalLabor;
+        if (goals.Count == 1) return goals.First().Labor;
+        
+        var laborSumma = goals.Sum(item => item.Labor);
+        var laborCount = goals.Count;
+        var laborArithmeticMean = laborSumma / laborCount;
+        return laborArithmeticMean;
+    }
+    
+    private static GoalPriority CalculatePrioritiesArithmeticMean(IReadOnlyCollection<Goal> goals, GoalPriority goalPriority)
+    {
+        if (goals.Count == 0) return goalPriority;
+        if (goals.Count == 1) return goals.First().Priority;
+        
+        var prioritiesSumma = goals.Sum(item => (int)item.Priority);
+        var prioritiesCount = goals.Count;
+        var prioritiesArithmeticMean = prioritiesSumma / prioritiesCount;
+        return prioritiesArithmeticMean switch
+        {
+            > 17 => GoalPriority.ExtraHigh,
+            > 10 => GoalPriority.High,
+            > 6 => GoalPriority.Medium,
+            > 3 => GoalPriority.Low,
+            _ => GoalPriority.ExtraLow
+        };
+    }
+    
     /// <summary>
     /// Вставить задачу
     /// </summary>
     /// <param name="putDto">Модель данных для вставки задачи</param>
     /// <response code="201">Задача добавлена</response>
     /// <response code="204">Задача обновлена</response>
-    /// <response code="400">Неверный входные данные</response>
+    /// <response code="400">Неверные входные данные</response>
     /// <response code="401">Токен доступа истек</response>
     /// <response code="404">Задача не найдена</response>
     /// <response code="500">Ошибка сервера</response>
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GoalDto))]
-    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(GoalDto))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(GoalImportantDto))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -123,7 +183,7 @@ public class GoalController : Controller
             return Unauthorized();
 
         if (!ModelState.IsValid) return BadRequest(ModelState);
-
+        
         if (putDto.Id is null || putDto.Id == Guid.Empty)
         {
             var newGoal = new Goal
@@ -145,7 +205,7 @@ public class GoalController : Controller
             return CreatedAtAction(nameof(Get), new { id = newGoal.Id }, newGoal);
         }
         
-        var goal = await _context.Goals.FirstOrDefaultAsync(x => x.Id == putDto.Id);
+        var goal = await _context.Goals.FirstOrDefaultAsync(goal => goal.Id == putDto.Id);
         if (goal is null)
             return NotFound(putDto.Id);
 
@@ -154,13 +214,40 @@ public class GoalController : Controller
         goal.Deadline = putDto.Deadline;
         goal.Labor = putDto.Labor;
         goal.Priority = putDto.Priority;
+        goal.Status = putDto.Status;
         goal.SubGoalsIds = putDto.SubGoalsIds;
         goal.DependGoalsIds = putDto.DependGoalsIds;
 
         _context.Goals.Update(goal);
         await _context.SaveChangesAsync();
 
+        await UpdateParentGoal(goal);
+        
         return NoContent();
+    }
+
+    private async Task UpdateParentGoal(Goal goal)
+    {
+        var parents = await _context.Goals
+            .Where(item => item.Status != GoalStatus.Overdue && item.SubGoalsIds.Contains(goal.Id))
+            .ToListAsync();
+
+        foreach (var parent in parents)
+        {
+            if (goal.Status != GoalStatus.New)
+            {
+                parent.Status = GoalStatus.InProgress;
+            }
+            
+            if (goal.Status == GoalStatus.Done && parent.SubGoalsIds.Count == 1)
+            {
+                parent.Status = GoalStatus.Done;
+            }
+            
+            _context.Goals.Update(parent);
+        }
+        
+        await _context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -182,10 +269,22 @@ public class GoalController : Controller
         if (userInfo is null)
             return Unauthorized();
 
-        var goal = await _context.Goals.FirstOrDefaultAsync(x => x.Id == id);
+        var goal = await _context.Goals.FirstOrDefaultAsync(goal => goal.Id == id);
         if (goal is null)
             return NotFound();
 
+        // Удалить задачу из списков подзадач и зависимых задач
+        var goals = await _context.Goals
+            .Where(item => item.SubGoalsIds.Contains(id) || item.DependGoalsIds.Contains(id))
+            .ToListAsync();
+        
+        foreach (var item in goals)
+        {
+            item.SubGoalsIds.Remove(id);
+            item.DependGoalsIds.Remove(id);
+            _context.Goals.Update(item);
+        }
+        
         _context.Goals.Remove(goal);
         await _context.SaveChangesAsync();
 
@@ -201,7 +300,7 @@ public class GoalController : Controller
     /// <response code="500">Ошибка сервера</response>
     /// <returns>Список задач</returns>
     [Route("important"), HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GoalDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<GoalImportantDto>))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetImportant([FromServices] IImportanceAlgorithm algorithm)
@@ -210,9 +309,15 @@ public class GoalController : Controller
         if (userInfo is null)
             return Unauthorized();
         
-        var goals = await _context.Goals.Where(x => x.UserId == userInfo.GuidId).ToListAsync();
-        var result = algorithm.Run(goals);
-        return Ok(result.Select(goal => new GoalDto
+        var goals = await _context.Goals
+            .Where(goal => goal.UserId == userInfo.GuidId && !goal.SubGoalsIds.Any() && goal.Status != GoalStatus.Overdue && goal.Status != GoalStatus.Done)
+            .ToListAsync();
+        
+        var algorithmTask = Task.Run(() => algorithm.Run(goals));
+        await algorithmTask;
+        var result = algorithmTask.Result;
+        
+        return Ok(result.Select(goal => new GoalImportantDto
         {
             Id = goal.Id,
             Name = goal.Name,
@@ -221,8 +326,6 @@ public class GoalController : Controller
             Labor = goal.Labor,
             Priority = goal.Priority,
             Status = goal.Status,
-            SubGoalsIds = goal.SubGoalsIds,
-            DependGoalsIds = goal.DependGoalsIds,
         }));
     }
     

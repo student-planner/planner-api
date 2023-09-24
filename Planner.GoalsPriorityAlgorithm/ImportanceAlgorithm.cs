@@ -10,7 +10,7 @@ public class ImportanceAlgorithm : IImportanceAlgorithm
     /// <inheritdoc cref="IImportanceAlgorithm.Run(IReadOnlyCollection{Planner.Models.Goal},int)"/>
     public IEnumerable<Goal> Run(IReadOnlyCollection<Goal> goals, int neededGoalsCount = 3)
     {
-        if (goals.Count == 0) return new List<Goal>();
+        if (goals.Count < neededGoalsCount) return goals;
         
         var dataPreparer = new AlgorithmDataPreparer(goals);
         var algorithmItems = dataPreparer.GetData();

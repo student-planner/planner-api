@@ -50,4 +50,9 @@ public class GoalPutDto
     /// Приоритет
     /// </summary>
     public GoalPriority Priority { get; set; } = GoalPriority.Low;
+
+    /// <summary>
+    /// Статус
+    /// </summary>
+    public GoalStatus Status { get; set; } = GoalStatus.New;
 }

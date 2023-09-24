@@ -6,9 +6,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.Models", "Planner.M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.Contracts", "Planner.Contracts\Planner.Contracts.csproj", "{3010687B-D46F-4275-A6DC-811BF40D721C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.AlgorithmPriorityGoals", "Planner.AlgorithmPriorityGoals\Planner.AlgorithmPriorityGoals.csproj", "{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.GoalsPriorityAlgorithm", "Planner.GoalsPriorityAlgorithm\Planner.GoalsPriorityAlgorithm.csproj", "{E2BD200D-13BE-417C-A26A-EC4F87E43BD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planner.GoalsPriorityAlgorithm.Tests", "Planner.GoalsPriorityAlgorithm.Tests\Planner.GoalsPriorityAlgorithm.Tests.csproj", "{FBF188F0-5C71-468C-AAD8-E4CCB56F51A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

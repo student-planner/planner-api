@@ -6,22 +6,22 @@ namespace Planner.Models;
 public enum GoalStatus
 {
     /// <summary>
-    /// Новая
-    /// </summary>
-    New,
-    
-    /// <summary>
     /// В процессе
     /// </summary>
     InProgress,
     
     /// <summary>
-    /// Выполнена
+    /// Новая
     /// </summary>
-    Done,
+    New,
     
     /// <summary>
     /// Просрочена
     /// </summary>
     Overdue,
+    
+    /// <summary>
+    /// Выполнена
+    /// </summary>
+    Done,
 }
